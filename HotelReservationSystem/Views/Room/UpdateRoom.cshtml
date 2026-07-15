@@ -1,0 +1,110 @@
+﻿@model HotelReservationSystem.ViewModels.RoomCreateVM
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="custom-card p-5">
+
+                <h2 class="page-title text-center">
+
+                    <i class="bi bi-pencil-square"></i>
+
+                    Update Room 
+
+                </h2>
+
+                <form asp-controller="Room" asp-action="UpdateRoom" method="post" 
+                enctype="multipart/form-data">
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+
+                        <label asp-for="RoomNumber"></label>
+
+                        <input asp-for="RoomNumber"
+                               class="form-control" />
+                        <span asp-validation-for="RoomNumber" class="text-danger"></span>
+
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Capacity"></label>
+                        <input asp-for="Capacity" class="form-control" />
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PricePerNight"></label>
+                        <input asp-for="PricePerNight" class="form-control" />
+                        <span asp-validation-for="PricePerNight" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Room Type</label>
+
+                        <select asp-for="RoomTypeId"
+                                asp-items="@(new SelectList(Model.roomTypes, "Id", "Name"))"
+                                class="form-select">
+
+                            <option value="">Select Room Type</option>
+
+                        </select>
+
+                        <span asp-validation-for="RoomTypeId"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Current Image</label><br />
+                        <img id="currentImage"
+                             src="@(string.IsNullOrEmpty(Model.ImagePath) ? "/Images/no-image.png" : "/Images/" + Model.ImagePath)"
+                             class="img-thumbnail"
+                             style="width:200px; height:200px; object-fit:cover;" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Change Image</label>
+                        <input asp-for="File" type="file" id="fileInput" class="form-control" accept="image/*" />
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label asp-for="Description"></label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="5"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+
+                    </div>
+
+                    <button class="btn btn-warning custom-btn">
+
+                        <i class="bi bi-check-circle"></i>
+
+                        Update
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary custom-btn">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

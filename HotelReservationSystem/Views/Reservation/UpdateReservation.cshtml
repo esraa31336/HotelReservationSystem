@@ -1,0 +1,45 @@
+﻿@model HotelReservationSystem.ViewModels.ReservationCreateVM
+
+<h2>Update Reservation</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="UpdateReservation" asp-route-id="@ViewBag.ReservationId" method="post">
+    <div class="mb-3">
+        <label>Select Room</label>
+        <select asp-for="RoomId" id="roomSelect" class="form-control">
+            @foreach (var room in Model.AvailableRooms)
+            {
+                <option value="@room.Id" data-price="@room.PricePerNight">
+                    @room.RoomNumber - @room.RoomType.Name - $@room.PricePerNight/night
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Check-in Date</label>
+        <input asp-for="CheckIn" type="date" id="checkIn" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Check-out Date</label>
+        <input asp-for="CheckOut" type="date" id="checkOut" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

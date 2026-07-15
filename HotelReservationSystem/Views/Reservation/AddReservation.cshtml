@@ -1,0 +1,114 @@
+﻿@model HotelReservationSystem.ViewModels.ReservationCreateVM
+
+<h2>Book a Room</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-action="AddReservation" method="post">
+
+    <div class="mb-3">
+        <label>Select Room</label>
+
+        <select asp-for="RoomId"
+                id="roomSelect"
+                class="form-control">
+
+            <option value="">-- Select Room --</option>
+
+            @foreach (var room in Model.AvailableRooms)
+            {
+                if (room.Id == Model.RoomId)
+                {
+                    <option value="@room.Id"
+                            data-price="@room.PricePerNight"
+                            selected>
+                        @room.RoomNumber -
+                        @room.RoomType.Name -
+                        Capacity @room.Capacity -
+                        $@room.PricePerNight/night
+                    </option>
+                }
+                else
+                {
+                    <option value="@room.Id"
+                            data-price="@room.PricePerNight">
+                        @room.RoomNumber -
+                        @room.RoomType.Name -
+                        Capacity @room.Capacity -
+                        $@room.PricePerNight/night
+                    </option>
+                }
+            }
+
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Check-in Date</label>
+        <input asp-for="CheckIn" type="date" id="checkIn" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Check-out Date</label>
+        <input asp-for="CheckOut" type="date" id="checkOut" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <h4>Total: $<span id="totalPriceDisplay">0</span></h4>
+        <input type="hidden" asp-for="TotalPrice" id="totalPriceInput" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+    <a asp-controller="Room" asp-action="Index" class="btn btn-secondary custom-btn">Back</a>
+</form>
+
+@section Scripts {
+    <script>
+        function calculateTotal() {
+            const roomSelect = document.getElementById('roomSelect');
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const totalDisplay = document.getElementById('totalPriceDisplay');
+            const totalInput = document.getElementById('totalPriceInput');
+
+            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+            const pricePerNight = parseFloat(selectedOption?.dataset.price) || 0;
+
+            if (checkIn && checkOut && pricePerNight > 0) {
+                const inDate = new Date(checkIn);
+                const outDate = new Date(checkOut);
+                const nights = Math.round((outDate - inDate) / (1000 * 60 * 60 * 24));
+
+                if (nights > 0) {
+                    const total = nights * pricePerNight;
+                    totalDisplay.textContent = total.toFixed(2);
+                    totalInput.value = total;
+                } else {
+                    totalDisplay.textContent = '0';
+                    totalInput.value = 0;
+                }
+            } else {
+                totalDisplay.textContent = '0';
+                totalInput.value = 0;
+            }
+        }
+
+        document.getElementById('roomSelect').addEventListener('change', calculateTotal);
+        document.getElementById('checkIn').addEventListener('change', calculateTotal);
+        document.getElementById('checkOut').addEventListener('change', calculateTotal);
+        window.onload = function () {
+            calculateTotal();
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

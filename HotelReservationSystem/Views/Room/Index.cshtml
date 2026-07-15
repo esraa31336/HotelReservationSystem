@@ -1,0 +1,156 @@
+﻿@model List<HotelReservationSystem.Models.Room>
+@using HotelReservationSystem.Enums
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="page-title">
+            <i class="bi bi-building"></i>
+            Our Rooms
+        </h2>
+
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <a asp-action="AddRoom" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i>
+                Add Room
+            </a>
+        }
+
+    </div>
+
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <div class="card room-card h-100 shadow-sm">
+
+                    <img src="~/Images/@item.ImagePath"
+                         class="room-image"
+                         alt="Room Image" />
+
+                    <div class="room-body d-flex flex-column">
+
+                        <span class="room-type">
+                            @item.RoomType.Name
+                        </span>
+
+                        <h4 class="room-title mt-3">
+                            Room @item.RoomNumber
+                        </h4>
+
+                        <p class="room-desc">
+                            @item.RoomType.Description
+                        </p>
+
+                        <p class="room-desc">
+                            @item.Description
+                        </p>
+
+                        <p class="room-info">
+                            <i class="bi bi-people-fill"></i>
+                            Capacity :
+                            <strong>@item.Capacity</strong>
+                        </p>
+
+                        <h3 class="room-price">
+                            $@item.PricePerNight
+                            <small>/night</small>
+                        </h3>
+
+                        @if (item.Status == RoomStatus.Available)
+                        {
+                            <span class="status-badge available">
+                                Available
+                            </span>
+                            <br />
+                        }
+
+                        <hr class="mt-auto" />
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <div class="d-flex justify-content-between">
+
+                                <a asp-action="UpdateRoom"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-warning">
+
+                                    <i class="bi bi-pencil-square"></i>
+                                    Edit
+
+                                </a>
+
+                                <form id="deleteForm-@item.Id"
+                                      asp-action="DeleteRoom"
+                                      asp-route-id="@item.Id"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="button"
+                                            onclick="confirmDelete(@item.Id)"
+                                            class="btn btn-danger">
+
+                                        <i class="bi bi-trash"></i>
+                                        Delete
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        }
+                        else if (User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="Reservation"
+                               asp-action="AddReservation"
+                               asp-route-roomId="@item.Id"
+                               class="btn btn-primary reserve-btn">
+
+                                <i class="bi bi-calendar-check"></i>
+                                Reserve Now
+
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+        function confirmDelete(id) {
+
+            Swal.fire({
+                title: 'Delete Room?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    document.getElementById("deleteForm-" + id).submit();
+                }
+
+            });
+
+        }
+    </script>
+}

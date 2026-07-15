@@ -1,0 +1,71 @@
+﻿@model HotelReservationSystem.Models.RoomType
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="custom-card p-5">
+
+                <h2 class="text-center mb-4 page-title">
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                    Add Room Type
+
+                </h2>
+
+                <form asp-action="AddRoomType" method="post">
+
+                    <div class="mb-3">
+
+                        <label asp-for="Name"></label>
+
+                        <input asp-for="Name" class="form-control" />
+
+                        <span asp-validation-for="Name" class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label asp-for="Description"></label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="5"></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <button type="submit" class="btn btn-success custom-btn">
+
+                        <i class="bi bi-check-circle"></i>
+
+                        Save
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary custom-btn">
+
+                        Back
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

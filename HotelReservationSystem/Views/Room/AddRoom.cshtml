@@ -1,0 +1,141 @@
+﻿@model HotelReservationSystem.ViewModels.RoomCreateVM
+
+<div class="container mt-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="custom-card p-5">
+
+                <h2 class="text-center mb-4 page-title">
+
+                    <i class="bi bi-plus-circle-fill"></i>
+
+                    Add Room 
+
+                </h2>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form asp-action="AddRoom" method="post" enctype="multipart/form-data">
+
+                    <div class="mb-3">
+
+                        <label asp-for="RoomNumber"></label>
+
+                        <input asp-for="RoomNumber" type="number" class="form-control" />
+
+                        <span asp-validation-for="RoomNumber" class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label asp-for="Description"></label>
+
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="5"></textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-5">
+
+                        <label asp-for="Capacity"></label>
+
+                        <input asp-for="Capacity" type="number" class="form-control" />
+
+                        <span asp-validation-for="Capacity"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-7">
+
+                        <label asp-for="PricePerNight"></label>
+
+                        <input asp-for="PricePerNight" type="number" class="form-control" />
+
+                        <span asp-validation-for="PricePerNight"
+                              class="text-danger"></span>
+
+                    </div>
+                    <div class="mb-3">
+
+                        <label>Room Type</label>
+
+                        <select asp-for="RoomTypeId"
+                                asp-items="@(new SelectList(Model.roomTypes, "Id", "Name"))"
+                                class="form-control">
+
+                            <option value="">-- Select Room Type --</option>
+
+                        </select>
+
+                        <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+
+                    </div>
+
+                    <div class="mb-6">
+
+                       <input asp-for="File" type="file" accept="image/*" onchange="loadFile(event)" />
+                       <img id="image" height="200" />
+                      
+
+                    </div>
+
+                   
+                    <br />
+
+                    <button type="submit" class="btn btn-success custom-btn">
+
+                        <i class="bi bi-check-circle"></i>
+
+                        Save
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary custom-btn">
+
+                        Back
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    var loadFile = function(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var image = document.getElementById('image');
+            image.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,101 @@
+﻿@model List<HotelReservationSystem.Models.Reservation>
+@using HotelReservationSystem.Enums
+
+<div class="container mt-4">
+    <h2>@(User.IsInRole("Admin") ? "All Reservations" : "My Reservations")</h2>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th>Guest Email</th>
+                }
+                <th>Room Number</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                @if (!User.IsInRole("Admin"))
+                {
+                    <th>Actions</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reservation in Model)
+            {
+                <tr>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td>@reservation.user?.Email</td>
+                    }
+                    <td>@reservation.room?.RoomNumber</td>
+                    <td>@reservation.CheckIn?.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.CheckOut?.ToString("yyyy-MM-dd")</td>
+                    <td>@reservation.TotalPrice</td>
+                    <td>@reservation.Status</td>
+
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <td>
+                            @if (reservation.Status == ReservationStatus.Peserved)
+                            {
+                                <a asp-action="UpdateReservation" asp-route-id="@reservation.Id" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+
+                                <form id="cancelForm-@reservation.Id"
+                                      asp-action="CancelReservation"
+                                      method="post"
+                                      style="display:inline;">
+
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@reservation.Id" />
+
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            onclick="confirmCancel(@reservation.Id)">
+                                        <i class="bi bi-x-circle"></i> Cancel
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@reservation.Status</span>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmCancel(id) {
+            Swal.fire({
+                title: 'Cancel Reservation?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, Cancel',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("cancelForm-" + id).submit();
+                }
+            });
+        }
+    </script>
+   
+    <partial name="_ValidationScriptsPartial" />
+
+}
